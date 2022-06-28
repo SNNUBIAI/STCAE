@@ -3,7 +3,6 @@ from torch.utils import data
 from nilearn.input_data import NiftiMasker
 import nibabel as nib
 import numpy as np
-
 import os
 
 from utils.transform import inverse_transform
@@ -64,7 +63,3 @@ class LoadHCPSub(data.Dataset):
 
 	def __len__(self):
 		return self.img.shape[0]
-
-if __name__ == '__main__':
-	dataset = LoadHCPSub(load_num=10)
-	print(dataset[0].shape)
