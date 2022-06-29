@@ -64,3 +64,25 @@ class ConvBlockShortCut(nn.Module):
 		x = F.gelu(x)
 		return x
 
+class ConvDown(nn.Module):
+	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1):
+		super(ConvDown, self).__init__()
+		self.convBlock = ConvBlock(layer_num=layer_num, kernel_size=kernel_size,
+								   padding=padding, groups=groups)
+		self.downsample = nn.MaxPool3d((2, 2, 2), stride=(2, 2, 2))
+
+	def forward(self, x):
+		x = self.convBlock(x)
+		x = self.downsample(x)
+		return x
+
+class ConvUp(nn.Module):
+	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1):
+		super(ConvUp, self).__init__()
+		self.convBlock = ConvBlock(layer_num=layer_num, kernel_size=kernel_size,
+								   padding=padding, groups=groups)
+
+	def forward(self, x):
+		x = F.upsample(x, scale_factor=2, mode="trilinear")
+		x = self.convBlock(x)
+		return x

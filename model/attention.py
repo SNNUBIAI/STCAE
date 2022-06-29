@@ -19,11 +19,11 @@ class ChannelWiseAttention(nn.Module):
 		feature = F.gelu(self.fc1(feature))
 		feature = F.gelu(self.fc2(feature))
 		feature = self.fc3(feature)
-		feature = torch.sigmoid(feature)
+		ca = torch.sigmoid(feature)
 
-		weight = feature.view(batch, channels, 1, 1, 1)
-		feature = weight.expand_as(x).clone()
-		return feature, weight
+		ca_weight = ca.view(batch, channels, 1, 1, 1)
+		ca = ca_weight.expand_as(x).clone()
+		return ca, ca_weight, feature
 
 class SpatialAttention(nn.Module):
 	def __init__(self, in_channels=32):
@@ -33,5 +33,6 @@ class SpatialAttention(nn.Module):
 
 	def forward(self, x):
 		x = F.gelu(self.conv1(x))
-		x = self.conv2(x)
-		return x
+		sa_weight = self.conv2(x)
+		sa = torch.sigmoid(sa_weight)
+		return sa, sa_weight
