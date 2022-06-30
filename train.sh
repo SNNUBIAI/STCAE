@@ -1,1 +1,1 @@
-nohup python train.py --epochs 5 --time_step 284 --task MOTOR
+nohup python train.py --epochs 5 --time_step 284 --task MOTOR > out.log 2>&1 &
