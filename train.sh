@@ -1,0 +1,1 @@
+nohup python train.py --epochs 5 --time_step 284 --task MOTOR

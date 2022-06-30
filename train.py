@@ -104,4 +104,3 @@ if __name__ == '__main__':
 
 	trainer = Trainer(args=args)
 	trainer.fit()
-	
