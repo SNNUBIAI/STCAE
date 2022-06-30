@@ -131,3 +131,6 @@ dmypy.json
 #pycharm
 .idea/
 model_save_dir/
+# log
+logdir/
+*.log
