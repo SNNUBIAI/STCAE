@@ -5,6 +5,7 @@ from torch.utils import data
 from torch.optim import Adam, SGD
 from tqdm import trange
 import argparse
+import os
 
 from model.architecture import STCAE
 from utils.log import LogSave
@@ -45,6 +46,8 @@ class Trainer:
 										   shuffle=True)
 		print("complete.")
 		self.log = LogSave(logdir=args.logdir)
+		if not os.path.exists(self.args.model_path):
+			os.mkdir(self.args.model_path)
 
 
 	def fit(self):
