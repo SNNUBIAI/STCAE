@@ -84,7 +84,7 @@ if __name__ == '__main__':
 	parser.add_argument('--device', default='cuda', type=str)
 	parser.add_argument('--epochs', default=20, type=int)
 	parser.add_argument('--img_path', default="/home/public/ExperimentData/HCP900/HCP_data/SINGLE/", type=str)
-	parser.add_argument('--mask_path', default="/home/public/ExperimentData/HCP900/HCP_data/mask_152_4mm.nii.gz", default=str)
+	parser.add_argument('--mask_path', default="/home/public/ExperimentData/HCP900/HCP_data/mask_152_4mm.nii.gz", type=str)
 	parser.add_argument('--model_path', default="./model_save_dir/", type=str)
 	parser.add_argument('--load_model', default=False, type=bool)
 	parser.add_argument('--load_epochs', default=0, type=int)
