@@ -134,3 +134,4 @@ model_save_dir/
 # log
 logdir/
 *.log
+*.out
