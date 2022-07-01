@@ -38,7 +38,7 @@ class FBNActivate:
 			  sa.flatten(1).min(dim=1)[0].view(32, 1, 1, 1).expand_as(sa))
 		sa = sa ** 2
 		ca = ca.flatten().detach().cpu().numpy()
-		img2d = self.masker.transform(sa)
+		img2d = self.masker.tensor_transform(sa)
 		components_img = self.masker.img2NiftImage(img2d)
 		plot_prob_atlas(components_img, title='All components', colorbar=True)
 		for i, cur_img in enumerate(iter_img(components_img)):
