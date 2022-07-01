@@ -46,7 +46,7 @@ class FBNActivate:
 						  cut_coords=cut_coords, colorbar=colorbar)
 			show()
 
-	def plot_net_sigmoid(self):
+	def plot_net_sigmoid(self, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True):
 		img = self.imgs.to(self.device)
 		_, sa, ca = self.attention(img)
 		sa = sa.squeeze(0)
@@ -59,4 +59,3 @@ class FBNActivate:
 			plot_stat_map(cur_img, display_mode="z", title="index={} weight={:.4f}".format(i, ca[i]),
 						  cut_coords=cut_coords, colorbar=colorbar)
 			show()
-			
