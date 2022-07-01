@@ -46,6 +46,7 @@ class FBNActivate:
 			sa_mask = self.masker.tensor_transform(img_thresholding)
 			sa_mask[sa_mask < thresholding] = 0
 			img2d = np.array(sa_mask, dtype=np.float32) * img2d
+			img2d[img2d < thresholding] = 0
 		components_img = self.masker.img2NiftImage(img2d)
 		plot_prob_atlas(components_img, title='All components', colorbar=True)
 		for i, cur_img in enumerate(iter_img(components_img)):
