@@ -45,3 +45,17 @@ class FBNActivate:
 			plot_stat_map(cur_img, display_mode="z", title="index={} weight={:.4f}".format(i, ca[i]),
 						  cut_coords=cut_coords, colorbar=colorbar)
 			show()
+
+	def plot_net_sigmoid(self):
+		img = self.imgs.to(self.device)
+		_, sa, ca = self.attention(img)
+		sa = sa.squeeze(0)
+		sa = torch.sigmoid(sa)
+		ca = ca.flatten().detach().cpu().numpy()
+		img2d = self.masker.tensor_transform(sa)
+		components_img = self.masker.img2NiftImage(img2d)
+		plot_prob_atlas(components_img, title='All components', colorbar=True)
+		for i, cur_img in enumerate(iter_img(components_img)):
+			plot_stat_map(cur_img, display_mode="z", title="index={} weight={:.4f}".format(i, ca[i]),
+						  cut_coords=cut_coords, colorbar=colorbar)
+			show()
