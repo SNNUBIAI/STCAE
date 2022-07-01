@@ -23,7 +23,7 @@ class ChannelWiseAttention(nn.Module):
 
 		ca_weight = ca.view(batch, channels, 1, 1, 1)
 		ca = ca_weight.expand_as(x).clone()
-		return ca, ca_weight, feature
+		return ca, ca_weight
 
 class SpatialAttention(nn.Module):
 	def __init__(self, in_channels=32):

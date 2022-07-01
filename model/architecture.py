@@ -17,11 +17,11 @@ class STCA(nn.Module):
 	def forward(self, x):
 		x = F.gelu(self.conv_time(x))
 		x = self.conv_block(x)
-		ca, ca_weight, feature = self.ca(x)
+		ca, ca_weight = self.ca(x)
 		x = x * ca
 		sa, sa_weight = self.sa(x)
 		x = x * sa
-		return x, sa_weight, feature
+		return x, sa_weight, ca
 
 class Encoder(nn.Module):
 	def __init__(self):
