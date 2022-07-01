@@ -17,6 +17,7 @@ class FBNActivate:
 				 device='cuda',
 				 model_path="./model_save_dir/hcp_motor_1.pth"):
 		self.time_step = time_step
+		self.out_map = out_map
 		model = STCAE(time_step=time_step, out_map=out_map)
 		model.load_state_dict(torch.load(model_path))
 		self.attention = STCA(time_step=time_step, out_map=out_map)
@@ -34,9 +35,9 @@ class FBNActivate:
 		img = self.imgs.to(self.device)
 		_, sa, ca = self.attention(img)
 		sa = sa.squeeze(0)
-		sa = (sa - sa.flatten(1).min(dim=1)[0].view(32, 1, 1, 1).expand_as(sa)) / \
-			 (sa.flatten(1).max(dim=1)[0].view(32, 1, 1, 1).expand_as(sa) -
-			  sa.flatten(1).min(dim=1)[0].view(32, 1, 1, 1).expand_as(sa))
+		sa = (sa - sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa)) / \
+			 (sa.flatten(1).max(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa) -
+			  sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa))
 		sa = sa ** 2
 		ca = ca.flatten().detach().cpu().numpy()
 		img2d = self.masker.tensor_transform(sa)
