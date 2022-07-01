@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore")
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -16,7 +19,7 @@ class Trainer:
 		self.args = args
 		self.model = None
 		if self.args.model == 'stcae':
-			self.model = STCAE(time_step=args.time_step)
+			self.model = STCAE(time_step=args.time_step, out_map=args.out_map)
 		else:
 			print("No such model architecture.")
 			exit(0)
@@ -38,8 +41,12 @@ class Trainer:
 														 step_size=args.step_size,
 														 gamma=args.gamma)
 		print("loading data......")
+		if args.load_num < 0:
+			load_num = None
+		else:
+			load_num = args.load_num
 		self.data_loader = data.DataLoader(LoadHCPSub(task=args.task,
-													  load_num=args.load_num,
+													  load_num=load_num,
 													  HCP_path=args.img_path,
 													  mask_path=args.mask_path),
 										   batch_size=args.batch_size,
@@ -103,6 +110,7 @@ if __name__ == '__main__':
 	parser.add_argument('--logdir', default='./logdir/', type=str)
 	parser.add_argument('--task', default='MOTOR', type=str)
 	parser.add_argument('--load_num', default=40, type=int)
+	parser.add_argument('--out_map', default=32, type=int)
 	args = parser.parse_args()
 
 	trainer = Trainer(args=args)

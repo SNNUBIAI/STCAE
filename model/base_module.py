@@ -3,15 +3,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class ConvMixer(nn.Module):
-	def __init__(self, kernel_size=3, padding=1, groups=32):
+	def __init__(self, kernel_size=3, padding=1, groups=32, in_channels=32):
 		super(ConvMixer, self).__init__()
-		self.conv = nn.Sequential(nn.Conv3d(in_channels=32, out_channels=32,
+		self.conv = nn.Sequential(nn.Conv3d(in_channels=in_channels, out_channels=in_channels,
 											kernel_size=kernel_size, padding=padding, groups=groups),
 								  nn.GELU(),
-								  nn.BatchNorm3d(32))
-		self.mixer = nn.Sequential(nn.Conv3d(in_channels=32, out_channels=32, kernel_size=1),
+								  nn.BatchNorm3d(in_channels))
+		self.mixer = nn.Sequential(nn.Conv3d(in_channels=in_channels, out_channels=in_channels, kernel_size=1),
 								   nn.GELU(),
-								   nn.BatchNorm3d(32))
+								   nn.BatchNorm3d(in_channels))
 	def forward(self, x):
 		x_in = x
 		x = self.conv(x)
@@ -20,12 +20,12 @@ class ConvMixer(nn.Module):
 		return x
 
 class ConvBlock(nn.Module):
-	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1):
+	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1, in_channels=32):
 		super(ConvBlock, self).__init__()
-		self.conv = nn.ModuleList([nn.Conv3d(in_channels=32, out_channels=32,
+		self.conv = nn.ModuleList([nn.Conv3d(in_channels=in_channels, out_channels=in_channels,
 											 kernel_size=kernel_size, padding=padding, groups=groups)
 								   for _ in range(layer_num)])
-		self.bn = nn.BatchNorm3d(32)
+		self.bn = nn.BatchNorm3d(in_channels)
 
 	def forward(self, x):
 		x_in = x
@@ -65,10 +65,10 @@ class ConvBlockShortCut(nn.Module):
 		return x
 
 class ConvDown(nn.Module):
-	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1):
+	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1, in_channels=32):
 		super(ConvDown, self).__init__()
 		self.convBlock = ConvBlock(layer_num=layer_num, kernel_size=kernel_size,
-								   padding=padding, groups=groups)
+								   padding=padding, groups=groups, in_channels=in_channels)
 		self.downsample = nn.MaxPool3d((2, 2, 2), stride=(2, 2, 2))
 
 	def forward(self, x):
@@ -77,10 +77,10 @@ class ConvDown(nn.Module):
 		return x
 
 class ConvUp(nn.Module):
-	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1):
+	def __init__(self, layer_num=3, kernel_size=3, padding=1, groups=1, in_channels=32):
 		super(ConvUp, self).__init__()
 		self.convBlock = ConvBlock(layer_num=layer_num, kernel_size=kernel_size,
-								   padding=padding, groups=groups)
+								   padding=padding, groups=groups, in_channels=in_channels)
 
 	def forward(self, x):
 		x = F.upsample(x, scale_factor=2, mode="trilinear")

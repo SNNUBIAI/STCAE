@@ -6,13 +6,13 @@ from model.attention import ChannelWiseAttention, SpatialAttention
 from model.base_module import ConvBlock, ConvDown, ConvUp
 
 class STCA(nn.Module):
-	def __init__(self, time_step=284):
+	def __init__(self, time_step=284, out_map=32):
 		super(STCA, self).__init__()
 		self.time_step = time_step
-		self.conv_time = nn.Conv3d(in_channels=self.time_step, out_channels=32, kernel_size=7, padding=3)
-		self.conv_block = ConvBlock(layer_num=3, kernel_size=5, padding=2)
-		self.ca = ChannelWiseAttention(in_channels=32)
-		self.sa = SpatialAttention(in_channels=32)
+		self.conv_time = nn.Conv3d(in_channels=self.time_step, out_channels=out_map, kernel_size=7, padding=3)
+		self.conv_block = ConvBlock(layer_num=3, kernel_size=5, padding=2, in_channels=out_map)
+		self.ca = ChannelWiseAttention(in_channels=out_map)
+		self.sa = SpatialAttention(in_channels=out_map)
 
 	def forward(self, x):
 		x = F.gelu(self.conv_time(x))
@@ -24,9 +24,9 @@ class STCA(nn.Module):
 		return x, sa_weight, ca
 
 class Encoder(nn.Module):
-	def __init__(self):
+	def __init__(self, out_map=32):
 		super(Encoder, self).__init__()
-		self.encode_list = nn.ModuleList([ConvDown() for _ in range(3)]) # 32 16 8
+		self.encode_list = nn.ModuleList([ConvDown(in_channels=out_map) for _ in range(4)]) # 32 16 8 4
 
 	def forward(self, x):
 		for layer in self.encode_list:
@@ -34,10 +34,10 @@ class Encoder(nn.Module):
 		return x
 
 class Decoder(nn.Module):
-	def __init__(self, time_step=284):
+	def __init__(self, time_step=284, out_map=32):
 		super(Decoder, self).__init__()
-		self.decode_list = nn.ModuleList([ConvUp() for _ in range(3)]) # 16 32 64
-		self.conv_time = nn.Sequential(nn.Conv3d(in_channels=32, out_channels=time_step, kernel_size=7, padding=3),
+		self.decode_list = nn.ModuleList([ConvUp(in_channels=out_map) for _ in range(4)]) # 8 16 32 64
+		self.conv_time = nn.Sequential(nn.Conv3d(in_channels=out_map, out_channels=time_step, kernel_size=7, padding=3),
 									   nn.GELU(),
 									   nn.Conv3d(in_channels=time_step, out_channels=time_step, kernel_size=1, padding=0))
 
@@ -48,12 +48,12 @@ class Decoder(nn.Module):
 		return x
 
 class STCAE(nn.Module):
-	def __init__(self, time_step=284):
+	def __init__(self, time_step=284, out_map=32):
 		super(STCAE, self).__init__()
 		self.time_step = time_step
-		self.stca = STCA(time_step=self.time_step)
-		self.encoder = Encoder()
-		self.decoder = Decoder(time_step=self.time_step)
+		self.stca = STCA(time_step=self.time_step, out_map=out_map)
+		self.encoder = Encoder(out_map=out_map)
+		self.decoder = Decoder(time_step=self.time_step, out_map=out_map)
 
 	def forward(self, x):
 		x, _, _ = self.stca(x)

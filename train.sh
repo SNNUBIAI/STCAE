@@ -1,1 +1,1 @@
-nohup python train.py --epochs 5 --time_step 284 --task MOTOR > out.log 2>&1 &
+nohup python train.py --device cuda:1 --epochs 5 --time_step 284 --task MOTOR --out_map 64 --load_num -1 > out.log 2>&1 &
