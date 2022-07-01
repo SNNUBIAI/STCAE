@@ -31,7 +31,7 @@ class FBNActivate:
 	def setImg(self, img_path):
 		self.imgs = self.masker.inverse_transform2tensor(img_path)
 
-	def plot_net(self, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True):
+	def plot_net(self, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True, thresholding=False):
 		img = self.imgs.to(self.device)
 		_, sa, ca = self.attention(img)
 		sa = sa.squeeze(0)
@@ -41,6 +41,10 @@ class FBNActivate:
 		sa = sa ** 2
 		ca = ca.flatten().detach().cpu().numpy()
 		img2d = self.masker.tensor_transform(sa)
+		if thresholding:
+			sa_mask = torch.sigmoid(torch.tensor(img2d, dtype=torch.float))
+			sa_mask[sa_mask < thresholding] = 0
+			img2d = np.array(sa_mask, dtype=np.float32) * img2d
 		components_img = self.masker.img2NiftImage(img2d)
 		plot_prob_atlas(components_img, title='All components', colorbar=True)
 		for i, cur_img in enumerate(iter_img(components_img)):
