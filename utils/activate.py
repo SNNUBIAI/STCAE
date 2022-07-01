@@ -59,3 +59,4 @@ class FBNActivate:
 			plot_stat_map(cur_img, display_mode="z", title="index={} weight={:.4f}".format(i, ca[i]),
 						  cut_coords=cut_coords, colorbar=colorbar)
 			show()
+			
