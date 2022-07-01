@@ -35,6 +35,7 @@ class FBNActivate:
 		img = self.imgs.to(self.device)
 		_, sa, ca = self.attention(img)
 		sa = sa.squeeze(0)
+		img_thresholding = torch.sigmoid(sa)
 		sa = (sa - sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa)) / \
 			 (sa.flatten(1).max(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa) -
 			  sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa))
@@ -42,7 +43,7 @@ class FBNActivate:
 		ca = ca.flatten().detach().cpu().numpy()
 		img2d = self.masker.tensor_transform(sa)
 		if thresholding:
-			sa_mask = torch.sigmoid(torch.tensor(img2d, dtype=torch.float))
+			sa_mask = self.masker.tensor_transform(img_thresholding)
 			sa_mask[sa_mask < thresholding] = 0
 			img2d = np.array(sa_mask, dtype=np.float32) * img2d
 		components_img = self.masker.img2NiftImage(img2d)
