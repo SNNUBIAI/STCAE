@@ -24,7 +24,7 @@ class FBNActivate:
 		self.device = device
 		self.attention.eval()
 		self.masker = Masker(mask_path=mask_path)
-		self.imgs = self.masker.inverse_transform2tensor(img_path)
+		self.imgs = self.masker.inverse_transform2tensor(img_path).unsqueeze(0)
 
 	def setImg(self, img_path):
 		self.imgs = self.masker.inverse_transform2tensor(img_path)
