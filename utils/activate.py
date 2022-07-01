@@ -11,14 +11,15 @@ from model.architecture import STCAE, STCA
 
 class FBNActivate:
 	def __init__(self, time_step=284,
+				 out_map=32,
 				 img_path="/home/public/ExperimentData/HCP900/HCP_data/SINGLE/MOTOR_sub_0.npy",
 				 mask_path="/home/public/ExperimentData/HCP900/HCP_data/mask_152_4mm.nii.gz",
 				 device='cuda',
 				 model_path="./model_save_dir/hcp_motor_1.pth"):
 		self.time_step = time_step
-		model = STCAE(time_step=time_step)
+		model = STCAE(time_step=time_step, out_map=out_map)
 		model.load_state_dict(torch.load(model_path))
-		self.attention = STCA(time_step=time_step)
+		self.attention = STCA(time_step=time_step, out_map=out_map)
 		self.attention.load_state_dict(model.stca.state_dict())
 		self.attention.to(device)
 		self.device = device
