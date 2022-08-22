@@ -59,3 +59,13 @@ class FBNActivate:
 			plot_stat_map(cur_img, display_mode="z", title="index={} weight={:.4f}".format(i, ca[i]),
 						  cut_coords=cut_coords, colorbar=colorbar)
 			show()
+
+	def get_components(self):
+		img = self.imgs.to(self.device)
+		_, sa, ca = self.attention(img)
+		sa = sa.squeeze(0)
+		sa = (sa - sa.flatten(1).mean(dim=1).view(self.out_map, 1, 1, 1).expand_as(sa)) / \
+			 (sa.flatten(1).std(dim=1).view(self.out_map, 1, 1, 1).expand_as(sa))
+		img2d = self.masker.tensor_transform(sa)
+		img2d = thresholding(img2d)
+		return img2d
