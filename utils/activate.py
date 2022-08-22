@@ -7,6 +7,7 @@ from nilearn.plotting import plot_stat_map, show
 import nibabel as nib
 
 from utils.transform import transform2d, inverse_transform, Masker
+from utils.thresholding import thresholding
 from model.architecture import STCAE, STCA
 
 class FBNActivate:
@@ -31,36 +32,27 @@ class FBNActivate:
 	def setImg(self, img_path):
 		self.imgs = self.masker.inverse_transform2tensor(img_path)
 
-	def plot_net(self, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True, thresholding=False):
+	def plot_net(self, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True, threshold=False):
 		img = self.imgs.to(self.device)
 		_, sa, ca = self.attention(img)
 		sa = sa.squeeze(0)
-		img_thresholding = torch.sigmoid(sa)
-		sa = (sa - sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa)) / \
-			 (sa.flatten(1).max(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa) -
-			  sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa))
-		sa = sa ** 2
+		# sa = (sa - sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa)) / \
+		# 	 (sa.flatten(1).max(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa) -
+		# 	  sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa))
+		# sa = sa ** 2
 		ca = ca.flatten().detach().cpu().numpy()
-		img2d = self.masker.tensor_transform(sa)
-		if thresholding:
-			sa_mask = self.masker.tensor_transform(img_thresholding)
-			sa_mask[sa_mask < thresholding] = 0
-			img2d = np.array(sa_mask, dtype=np.float32) * img2d
-			img2d[img2d < thresholding] = 0
-		components_img = self.masker.img2NiftImage(img2d)
-		plot_prob_atlas(components_img, title='All components', colorbar=True)
-		for i, cur_img in enumerate(iter_img(components_img)):
-			plot_stat_map(cur_img, display_mode="z", title="index={} weight={:.4f}".format(i, ca[i]),
-						  cut_coords=cut_coords, colorbar=colorbar)
-			show()
-
-	def plot_net_sigmoid(self, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True):
-		img = self.imgs.to(self.device)
-		_, sa, ca = self.attention(img)
-		sa = sa.squeeze(0)
-		sa = torch.sigmoid(sa)
-		ca = ca.flatten().detach().cpu().numpy()
-		img2d = self.masker.tensor_transform(sa)
+		if threshold:
+			sa = (sa - sa.flatten(1).mean(dim=1).view(self.out_map, 1, 1, 1).expand_as(sa)) / \
+				 (sa.flatten(1).std(dim=1).view(self.out_map, 1, 1, 1).expand_as(sa))
+			img2d = self.masker.tensor_transform(sa)
+			img2d = thresholding(img2d)
+			# img2d[img2d < thresholding] = 0
+		else:
+			sa = (sa - sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa)) / \
+				 (sa.flatten(1).max(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa) -
+				  sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa))
+			sa = sa ** 2
+			img2d = self.masker.tensor_transform(sa)
 		components_img = self.masker.img2NiftImage(img2d)
 		plot_prob_atlas(components_img, title='All components', colorbar=True)
 		for i, cur_img in enumerate(iter_img(components_img)):
