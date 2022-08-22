@@ -54,6 +54,24 @@ class FBNActivate:
 						  cut_coords=cut_coords, colorbar=colorbar)
 			show()
 
+	def get_components(self, thresholding=False):
+		img = self.imgs.to(self.device)
+		_, sa, _ = self.attention(img)
+		sa = sa.squeeze(0)
+		img_thresholding = torch.sigmoid(sa)
+		sa = (sa - sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa)) / \
+			 (sa.flatten(1).max(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa) -
+			  sa.flatten(1).min(dim=1)[0].view(self.out_map, 1, 1, 1).expand_as(sa))
+		sa = sa ** 2
+		# ca = ca.flatten().detach().cpu().numpy()
+		img2d = self.masker.tensor_transform(sa)
+		if thresholding:
+			sa_mask = self.masker.tensor_transform(img_thresholding)
+			sa_mask[sa_mask < thresholding] = 0
+			img2d = np.array(sa_mask, dtype=np.float32) * img2d
+			img2d[img2d < thresholding] = 0
+		return img2d
+
 	def plot_net_sigmoid(self, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True):
 		img = self.imgs.to(self.device)
 		_, sa, ca = self.attention(img)
