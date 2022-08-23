@@ -60,12 +60,15 @@ class FBNActivate:
 						  cut_coords=cut_coords, colorbar=colorbar)
 			show()
 
-	def get_components(self):
+	def get_components(self, threshold=False):
 		img = self.imgs.to(self.device)
 		_, sa, ca = self.attention(img)
 		sa = sa.squeeze(0)
 		sa = (sa - sa.flatten(1).mean(dim=1).view(self.out_map, 1, 1, 1).expand_as(sa)) / \
 			 (sa.flatten(1).std(dim=1).view(self.out_map, 1, 1, 1).expand_as(sa))
 		img2d = self.masker.tensor_transform(sa)
-		img2d = thresholding(img2d)
+		if threshold:
+			img2d = thresholding(img2d)
+		else:
+			img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
 		return img2d
