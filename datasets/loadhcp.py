@@ -66,7 +66,6 @@ class LoadHCPSub(data.Dataset):
 		img = torch.tensor(x_train_3D, dtype=torch.float)
 		del x_train_3D
 		img = img.permute(3, 0, 1, 2)
-		img = img.unsqueeze(0)
 		return img
 
 	def __len__(self):
