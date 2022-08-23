@@ -70,5 +70,6 @@ class FBNActivate:
 		if threshold:
 			img2d = thresholding(img2d)
 		else:
+			img2d[np.sum(img2d > 0, axis=1) < np.sum(img2d < 0, axis=1), :] *= -1
 			img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
 		return img2d
