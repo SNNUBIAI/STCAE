@@ -98,11 +98,11 @@ class STAIndividual(Masker):
 		self.img_path = img_path
 		self.time_step = time_step
 		self.stcae = STCAE(time_step=time_step, out_map=out_map)
+		self.stca = STCA(time_step=time_step, out_map=out_map)
 		if model_path:
 			self.stcae.load_state_dict(torch.load(model_path))
-			self.stca = STCA(time_step=time_step, out_map=out_map)
 			self.stca.load_state_dict(self.stcae.stca.state_dict())
-			self.stca.to(self.device)
+		self.stca.to(self.device)
 		self.stcae.to(self.device)
 		self.optimizer = Adam(self.stcae.parameters(), lr=0.001)
 		self.mse_loss = nn.MSELoss()
