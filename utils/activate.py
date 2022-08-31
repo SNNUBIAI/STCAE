@@ -127,7 +127,7 @@ class STAIndividual(Masker):
 
 				total_loss += loss.item()
 			print("\nloss :{}".format(total_loss / (self.imgs.shape[1] - self.time_step)))
-		self.stca.load_state_dict(self.stcae.state_dict())
+		self.stca.load_state_dict(self.stcae.stca.state_dict())
 
 	def save_model(self, model_path):
 		torch.save(self.stcae.state_dict(), model_path)
