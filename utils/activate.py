@@ -93,7 +93,7 @@ class STAIndividual(Masker):
 								  standardize=True,
 								  detrend=1,
 								  smoothing_fwhm=6.)
-		self.fit()
+		self.masker.fit()
 		self.device = device
 		self.img_path = img_path
 		self.time_step = time_step
