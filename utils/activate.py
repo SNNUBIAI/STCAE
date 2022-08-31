@@ -87,7 +87,8 @@ class STAIndividual(Masker):
 				 device="cuda",
 				 model_path=None,
 				 time_step=40,
-				 out_map=64):
+				 out_map=64,
+				 lr=0.0001):
 		super(STAIndividual, self).__init__(mask_path=mask_path)
 		self.masker = NiftiMasker(mask_img=mask_path,
 								  standardize=True,
@@ -104,7 +105,7 @@ class STAIndividual(Masker):
 			self.stca.load_state_dict(self.stcae.stca.state_dict())
 		self.stca.to(self.device)
 		self.stcae.to(self.device)
-		self.optimizer = Adam(self.stcae.parameters(), lr=0.001)
+		self.optimizer = Adam(self.stcae.parameters(), lr=lr)
 		self.mse_loss = nn.MSELoss()
 
 	def load_img(self):
