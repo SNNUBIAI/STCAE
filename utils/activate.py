@@ -13,7 +13,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from utils.transform import transform2d, inverse_transform, Masker
-from utils.thresholding import thresholding
+from utils.thresholding import thresholding, flip
 from model.architecture import STCAE, STCA
 
 class FBNActivate:
@@ -138,6 +138,7 @@ class STAIndividual(Masker):
 		sa = (sa - sa.flatten(1).mean(dim=1).view(64, 1, 1, 1).expand_as(sa)) / \
 			 (sa.flatten(1).std(dim=1).view(64, 1, 1, 1).expand_as(sa))
 		img2d = self.tensor_transform(sa)
+		img2d[np.sum(img2d > 0, axis=1) < np.sum(img2d < 0, axis=1)] *= -1
 		img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
 		return img2d
 
