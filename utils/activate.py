@@ -139,8 +139,8 @@ class STAIndividual(Masker):
 		sa = (sa - sa.flatten(1).mean(dim=1).view(64, 1, 1, 1).expand_as(sa)) / \
 			 (sa.flatten(1).std(dim=1).view(64, 1, 1, 1).expand_as(sa))
 		img2d = self.tensor_transform(sa)
-		img2d[np.sum(img2d > 0, axis=1) < np.sum(img2d < 0, axis=1)] *= -1
-		img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
+		#img2d[np.sum(img2d > 0, axis=1) < np.sum(img2d < 0, axis=1)] *= -1
+		#img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
 		return img2d
 
 	def plot_net(self, img2d, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True, threshold=False):
