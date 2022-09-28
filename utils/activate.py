@@ -109,7 +109,10 @@ class STAIndividual(Masker):
 		self.mse_loss = nn.MSELoss()
 
 	def load_img(self):
-		fmri_masked = self.masker.transform(self.img_path)
+		if self.img_path.endswith(".npy"):
+			fmri_masked = np.load(self.img_path)
+		else:
+			fmri_masked = self.masker.transform(self.img_path)
 		self.imgs = self.inverse_transform2tensor(fmri_masked).unsqueeze(0)
 		self.imgs = self.imgs.to(device=self.device)
 
