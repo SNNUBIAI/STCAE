@@ -10,13 +10,13 @@ class STCA(nn.Module):
 		super(STCA, self).__init__()
 		self.time_step = time_step
 		self.conv_time = nn.Conv3d(in_channels=self.time_step, out_channels=out_map, kernel_size=7, padding=3)
-		self.conv_block = ConvBlock(layer_num=3, kernel_size=5, padding=2, in_channels=out_map)
+		# self.conv_block = ConvBlock(layer_num=3, kernel_size=5, padding=2, in_channels=out_map)
 		self.ca = ChannelWiseAttention(in_channels=out_map)
 		self.sa = SpatialAttention(in_channels=out_map)
 
 	def forward(self, x):
 		x = F.gelu(self.conv_time(x))
-		x = self.conv_block(x)
+		# x = self.conv_block(x)
 		ca, ca_weight = self.ca(x)
 		x = x * ca
 		sa, sa_weight = self.sa(x)
