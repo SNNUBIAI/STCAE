@@ -109,7 +109,10 @@ class STAIndividual(Masker):
 		self.mse_loss = nn.MSELoss()
 
 	def load_img(self):
-		fmri_masked = self.masker.transform(self.img_path)
+		if self.img_path.endswith(".npy"):
+			fmri_masked = np.load(self.img_path)
+		else:
+			fmri_masked = self.masker.transform(self.img_path)
 		self.imgs = self.inverse_transform2tensor(fmri_masked).unsqueeze(0)
 		self.imgs = self.imgs.to(device=self.device)
 
@@ -143,12 +146,23 @@ class STAIndividual(Masker):
 		#img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
 		return img2d
 
-	def plot_net(self, img2d, cut_coords=(5, 10, 15, 20, 25, 30, 35, 40), colorbar=True, threshold=False):
+	def plot_net(self, img2d,
+				 cut_coords=(5, 10, 15, 20, 25, 30, 35, 40),
+				 colorbar=True,
+				 threshold=False,
+				 annotate=True):
 		if threshold:
 			img2d[img2d < threshold] = 0
 		components_img = self.img2NiftImage(img2d)
 		plot_prob_atlas(components_img, title='All components', colorbar=True)
-		for i, cur_img in enumerate(iter_img(components_img)):
-			plot_stat_map(cur_img, display_mode="z", title="index={}".format(i),
-						  cut_coords=cut_coords, colorbar=colorbar)
-			show()
+		if annotate:
+			for i, cur_img in enumerate(iter_img(components_img)):
+				plot_stat_map(cur_img, display_mode="z", title="index={}".format(i),
+							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate)
+				show()
+		else:
+			for i, cur_img in enumerate(iter_img(components_img)):
+				print(i+1)
+				plot_stat_map(cur_img, display_mode="z",
+							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate)
+				show()
