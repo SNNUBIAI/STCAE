@@ -31,7 +31,6 @@ class LoadHCP(data.Dataset):
 		self.img = self.img.unsqueeze(1)
 
 	def __getitem__(self, item):
-
 		return self.img[item]
 
 	def __len__(self):
@@ -44,11 +43,14 @@ class LoadHCPSub(data.Dataset):
 		self.task = task
 		self.mask_img = nib.load(mask_path).get_fdata()
 		self.filename = os.listdir(HCP_path)
-		self.task_file = [name for name in self.filename if task in name]
+		if task != "None":
+			self.fmri_file = [name for name in self.filename if task in name]
+		else:
+			self.fmri_file = self.filename
 		self.hcp_path = HCP_path
 
 		if load_num != None:
-			self.task_file = self.task_file[:load_num]
+			self.fmri_file = self.fmri_file[:load_num]
 		# fmri_masked_list = []
 		# for file in self.task_file:
 		# 	fmri_masked = np.load(HCP_path + file)
@@ -61,7 +63,7 @@ class LoadHCPSub(data.Dataset):
 		# self.img = torch.cat(fmri_masked_list, dim=0)
 
 	def __getitem__(self, item):
-		fmri_masked = np.load(self.hcp_path + self.task_file[item])
+		fmri_masked = np.load(self.hcp_path + self.fmri_file[item])
 		x_train_3D = inverse_transform(fmri_masked, self.mask_img)
 		img = torch.tensor(x_train_3D, dtype=torch.float)
 		del x_train_3D
@@ -69,4 +71,4 @@ class LoadHCPSub(data.Dataset):
 		return img
 
 	def __len__(self):
-		return len(self.task_file)
+		return len(self.fmri_file)
