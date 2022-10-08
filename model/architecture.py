@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from model.attention import ChannelWiseAttention, SpatialAttention
-from model.base_module import ConvBlock, ConvDown, ConvUp
+from model.base_module import ConvBlock, ConvDown, ConvUp, ConvBlockShortCut
 
 class STCA(nn.Module):
 	def __init__(self, time_step=284, out_map=32):
@@ -28,7 +28,7 @@ class MutiHeadSTCA(nn.Module):
 	def __init__(self, time_step=284, n_heads=8, out_map=64):
 		super(MutiHeadSTCA, self).__init__()
 		self.conv_time = nn.Conv3d(in_channels=time_step, out_channels=out_map, kernel_size=5, padding=2)
-		self.muti_head_stca = nn.ModuleList([STCA(time_step=out_map, out_map=out_map//n_heads) for _ in range(n_heads)])
+		self.muti_head_stca = nn.ModuleList([nn.Sequential(ConvBlockShortCut(in_channels=out_map, out_channels=out_map), STCA(time_step=out_map, out_map=out_map//n_heads)) for _ in range(n_heads)])
 
 	def forward(self, x):  #(batch_size, time_step, D, W, H)
 		x = F.gelu(self.conv_time(x))  #(batch_size, channels, D, W, H)
