@@ -10,7 +10,7 @@ from tqdm import trange
 import argparse
 import os
 
-from model.architecture import STCAE
+from model.architecture import STCAE, MutiHeadSTCAE
 from utils.log import LogSave
 from datasets.loadhcp import LoadHCPSub
 
@@ -20,6 +20,8 @@ class Trainer:
 		self.model = None
 		if self.args.model == 'stcae':
 			self.model = STCAE(time_step=args.time_step, out_map=args.out_map)
+		elif self.args.model == 'mutiheadstcae':
+			self.model = MutiHeadSTCAE(time_step=args.time_step, n_heads=args.n_heads, out_map=args.out_map)
 		else:
 			print("No such model architecture.")
 			exit(0)
@@ -88,6 +90,7 @@ class Trainer:
 		else:
 			torch.save(self.model.state_dict(), model_path)
 
+#  nohup python train.py --encoder hcp_rest_1200  --device cuda --img_path /home/public/ExperimentData/HCP900/hcp_rest/  --epochs 3 --time_step 1200 --task None --out_map 64 --load_num 40 > out.log 2>&1 &
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--lr', default=0.001, type=float)
@@ -111,6 +114,7 @@ if __name__ == '__main__':
 	parser.add_argument('--task', default='MOTOR', type=str)
 	parser.add_argument('--load_num', default=40, type=int)
 	parser.add_argument('--out_map', default=32, type=int)
+	parser.add_argument('--n_heads', default=8, type=int)
 	args = parser.parse_args()
 
 	trainer = Trainer(args=args)

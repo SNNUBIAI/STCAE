@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore")
 
 from utils.transform import transform2d, inverse_transform, Masker
 from utils.thresholding import thresholding, flip
-from model.architecture import STCAE, STCA
+from model.architecture import STCAE, STCA, MutiHeadSTCA, MutiHeadSTCAE
 
 class FBNActivate:
 	def __init__(self, time_step=284,
