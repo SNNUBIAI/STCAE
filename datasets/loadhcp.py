@@ -6,6 +6,7 @@ import numpy as np
 import os
 
 from utils.transform import inverse_transform
+from datasets.preprocessing import sampling_fmri
 
 class LoadHCP(data.Dataset):
 	def __init__(self, task="EMOTION", load_num=None,
@@ -39,7 +40,7 @@ class LoadHCP(data.Dataset):
 class LoadHCPSub(data.Dataset):
 	def __init__(self, task="EMOTION", load_num=None,
 				mask_path="/home/public/ExperimentData/HCP900/HCP_data/mask_152_4mm.nii.gz",
-				HCP_path="/home/public/ExperimentData/HCP900/HCP_data/SINGLE/"):
+				HCP_path="/home/public/ExperimentData/HCP900/HCP_data/SINGLE/", sample=False, sample_num=176):
 		self.task = task
 		self.mask_img = nib.load(mask_path).get_fdata()
 		self.filename = os.listdir(HCP_path)
@@ -48,6 +49,8 @@ class LoadHCPSub(data.Dataset):
 		else:
 			self.fmri_file = self.filename
 		self.hcp_path = HCP_path
+		self.sample = sample
+		self.sample_num = sample_num
 
 		if load_num != None:
 			self.fmri_file = self.fmri_file[:load_num]
@@ -68,6 +71,8 @@ class LoadHCPSub(data.Dataset):
 		img = torch.tensor(x_train_3D, dtype=torch.float)
 		del x_train_3D
 		img = img.permute(3, 0, 1, 2)
+		if self.sample:
+			img = sampling_fmri(img, self.sample_num)
 		return img
 
 	def __len__(self):

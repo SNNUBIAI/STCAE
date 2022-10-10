@@ -50,7 +50,9 @@ class Trainer:
 		self.data_loader = data.DataLoader(LoadHCPSub(task=args.task,
 													  load_num=load_num,
 													  HCP_path=args.img_path,
-													  mask_path=args.mask_path),
+													  mask_path=args.mask_path,
+													  sample=args.sample,
+													  sample_num=args.sample_num),
 										   batch_size=args.batch_size,
 										   shuffle=True)
 		print("complete.")
@@ -115,6 +117,8 @@ if __name__ == '__main__':
 	parser.add_argument('--load_num', default=40, type=int)
 	parser.add_argument('--out_map', default=32, type=int)
 	parser.add_argument('--n_heads', default=8, type=int)
+	parser.add_argument('--sample', default=False, type=bool)
+	parser.add_argument('--sample_num', default=176, type=int)
 	args = parser.parse_args()
 
 	trainer = Trainer(args=args)
