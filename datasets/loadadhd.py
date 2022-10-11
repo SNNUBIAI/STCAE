@@ -14,7 +14,6 @@ class LoadADHD40Sample(data.Dataset):
 		fmri_masked = np.load(img_path)
 		self.masker = Masker(mask_path=mask_path)
 		self.imgs = self.masker.inverse_transform2tensor(fmri_masked)
-		self.imgs = self.imgs.unsqueeze(1)
 
 	def __getitem__(self, item):
 		imgs = sampling_fmri(self.imgs, sample_num=self.sample_num)
