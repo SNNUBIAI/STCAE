@@ -13,6 +13,7 @@ import os
 from model.architecture import STCAE, MutiHeadSTCAE
 from utils.log import LogSave
 from datasets.loadhcp import LoadHCPSub
+from datasets.loadadhd import LoadADHD40Sample
 
 class Trainer:
 	def __init__(self, args):
@@ -47,14 +48,20 @@ class Trainer:
 			load_num = None
 		else:
 			load_num = args.load_num
-		self.data_loader = data.DataLoader(LoadHCPSub(task=args.task,
-													  load_num=load_num,
-													  HCP_path=args.img_path,
-													  mask_path=args.mask_path,
-													  sample=args.sample,
-													  sample_num=args.sample_num),
-										   batch_size=args.batch_size,
-										   shuffle=True)
+
+		if args.load_dataset == 'hcp':
+			self.data_loader = data.DataLoader(LoadHCPSub(task=args.task,
+														  load_num=load_num,
+														  HCP_path=args.img_path,
+														  mask_path=args.mask_path,
+														  sample=args.sample,
+														  sample_num=args.sample_num),
+											   batch_size=args.batch_size,
+											   shuffle=True)
+		elif args.load_dataset == 'adhd':
+			self.data_loader = data.DataLoader(LoadADHD40Sample(img_path=args.img_path,
+																mask_path=args.mask_path,
+																sample_num=args.sample_num))
 		print("complete.")
 		self.log = LogSave(logdir=args.logdir)
 		if not os.path.exists(self.args.model_path):
@@ -119,6 +126,7 @@ if __name__ == '__main__':
 	parser.add_argument('--n_heads', default=8, type=int)
 	parser.add_argument('--sample', default=False, type=bool)
 	parser.add_argument('--sample_num', default=176, type=int)
+	parser.add_argument('--load_dataset', default='hcp', type=str)
 	args = parser.parse_args()
 
 	trainer = Trainer(args=args)
