@@ -1,6 +1,5 @@
 import torch
 from torch.utils import data
-from nilearn.input_data import NiftiMasker
 import nibabel as nib
 import numpy as np
 import os
