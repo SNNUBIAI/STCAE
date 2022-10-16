@@ -117,6 +117,7 @@ class STAIndividual(Masker):
 		self.imgs = self.imgs.to(device=self.device)
 
 	def fit(self, epochs=2):
+		self.stca.train()
 		for epoch in trange(epochs):
 			total_loss = 0
 			for i in range(self.imgs.shape[1] - self.time_step):
@@ -136,6 +137,7 @@ class STAIndividual(Masker):
 	def save_model(self, model_path):
 		torch.save(self.stcae.state_dict(), model_path)
 
+	@torch.no_grad()
 	def predict(self, index):
 		_, sa, ca = self.stca(self.imgs[:, index:index + self.time_step, ...])
 		sa = sa.squeeze(0)
@@ -146,6 +148,9 @@ class STAIndividual(Masker):
 		#img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
 		return img2d
 
+	def eval(self):
+		self.stca.eval()
+
 	def plot_net(self, img2d,
 				 cut_coords=(5, 10, 15, 20, 25, 30, 35, 40),
 				 colorbar=True,
@@ -154,7 +159,6 @@ class STAIndividual(Masker):
 		if threshold:
 			img2d[img2d < threshold] = 0
 		components_img = self.img2NiftImage(img2d)
-		plot_prob_atlas(components_img, title='All components', colorbar=True)
 		if annotate:
 			for i, cur_img in enumerate(iter_img(components_img)):
 				plot_stat_map(cur_img, display_mode="z", title="index={}".format(i),
