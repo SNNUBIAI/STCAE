@@ -154,6 +154,7 @@ class STAIndividual(Masker):
 	def plot_net(self, img2d,
 				 cut_coords=(5, 10, 15, 20, 25, 30, 35, 40),
 				 colorbar=True,
+				 display_mode="z",
 				 threshold=False,
 				 annotate=True):
 		if threshold:
@@ -161,12 +162,12 @@ class STAIndividual(Masker):
 		components_img = self.img2NiftImage(img2d)
 		if annotate:
 			for i, cur_img in enumerate(iter_img(components_img)):
-				plot_stat_map(cur_img, display_mode="z", title="index={}".format(i),
+				plot_stat_map(cur_img, display_mode=display_mode, title="index={}".format(i),
 							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate)
 				show()
 		else:
 			for i, cur_img in enumerate(iter_img(components_img)):
 				print(i+1)
-				plot_stat_map(cur_img, display_mode="z",
+				plot_stat_map(cur_img, display_mode=display_mode,
 							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate)
 				show()
