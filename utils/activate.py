@@ -156,18 +156,18 @@ class STAIndividual(Masker):
 				 colorbar=True,
 				 display_mode="z",
 				 threshold=False,
-				 annotate=True):
+				 annotate=True, draw_cross=False):
 		if threshold:
 			img2d[img2d < threshold] = 0
 		components_img = self.img2NiftImage(img2d)
 		if annotate:
 			for i, cur_img in enumerate(iter_img(components_img)):
 				plot_stat_map(cur_img, display_mode=display_mode, title="index={}".format(i),
-							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate)
+							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate, draw_cross=False)
 				show()
 		else:
 			for i, cur_img in enumerate(iter_img(components_img)):
 				print(i+1)
 				plot_stat_map(cur_img, display_mode=display_mode,
-							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate)
+							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate, draw_cross=False)
 				show()
