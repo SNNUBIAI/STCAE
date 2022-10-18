@@ -10,6 +10,25 @@ Spatial-Temporal Convolutional Attention Encoder
 - tensorboardX
 
 ## Training
+- STCAE in an individual
+```python
+from utils.activate import STAIndividual
+sta = STAIndividual(mask_path="/home/public/ExperimentData/HCP900/HCP_data/mask_152_4mm.nii.gz",
+                    img_path="/home/public/ExperimentData/HCP900/HCP_RestingonMNI/100307/MNINonLinear/Results/rfMRI_REST1_LR/rfMRI_REST1_LR.nii.gz",
+                    device="cuda",
+				    model_path=None,
+				    time_step=40,
+				    out_map=64,
+                    lr=0.0001) 
+sta.load_img()
+sta.fit(epochs=1)
+sta.eval()
+
+img2d = sta.predict(0)
+
+sta.plot_net(img2d)
+```
+
 - STCAE in MOTOR task 
 
 `python train.py --device cuda --epochs 5 --time_step 284 --task MOTOR --out_map 64 --load_num -1`
