@@ -83,7 +83,7 @@ class STCAE(nn.Module):
 		decode = decode[:, :, 7:-8, 3:-3, 8:-9]
 		return decode
 
-	def encoder(self, x):
+	def encode(self, x):
 		x, _, _ = self.stca(x)
 		x = F.pad(x, (8, 9, 3, 3, 7, 8), "constant", 0)
 		encode = self.encoder(x)

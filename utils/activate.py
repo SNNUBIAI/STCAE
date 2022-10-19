@@ -154,7 +154,7 @@ class STAIndividual(Masker):
 		encode_list = []
 		for i in range(self.imgs.shape[1] - self.time_step):
 			x = self.imgs[:, i:i + 40, ...]
-			encode = self.stcae.encoder(x)
+			encode = self.stcae.encode(x)
 			encode_list.append(encode)
 		encode = torch.cat(encode_list, dim=0)
 		return encode
