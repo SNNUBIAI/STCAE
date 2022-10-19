@@ -117,7 +117,7 @@ class STAIndividual(Masker):
 		self.imgs = self.imgs.to(device=self.device)
 
 	def fit(self, epochs=2):
-		self.stca.train()
+		self.stcae.train()
 		for epoch in trange(epochs):
 			total_loss = 0
 			for i in range(self.imgs.shape[1] - self.time_step):
@@ -148,8 +148,20 @@ class STAIndividual(Masker):
 		#img2d = (img2d - img2d.min(axis=1).reshape(-1, 1)) / (img2d.max(axis=1).reshape(-1, 1) - img2d.min(axis=1).reshape(-1, 1))
 		return img2d
 
+	@torch.no_grad()
+	def predict_encode(self):
+		self.eval()
+		encode_list = []
+		for i in range(self.imgs.shape[1] - self.time_step):
+			x = self.imgs[:, i:i + 40, ...]
+			encode = self.stcae.encoder(x)
+			encode_list.append(encode)
+		encode = torch.cat(encode_list, dim=0)
+		return encode
+
 	def eval(self):
 		self.stca.eval()
+		self.stcae.eval()
 
 	def plot_net(self, img2d,
 				 cut_coords=(5, 10, 15, 20, 25, 30, 35, 40),

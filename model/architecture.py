@@ -83,6 +83,14 @@ class STCAE(nn.Module):
 		decode = decode[:, :, 7:-8, 3:-3, 8:-9]
 		return decode
 
+	def encoder(self, x):
+		x, _, _ = self.stca(x)
+		x = F.pad(x, (8, 9, 3, 3, 7, 8), "constant", 0)
+		encode = self.encoder(x)
+		batch, channel, d, h, w = encode.size()
+		encode = F.adaptive_avg_pool3d(x, (1, 1, 1)).view((batch, channel))
+		return encode
+
 class MutiHeadSTCAE(nn.Module):
 	def __init__(self, time_step=284, n_heads=8, out_map=32):
 		super(MutiHeadSTCAE, self).__init__()
