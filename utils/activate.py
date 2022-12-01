@@ -209,9 +209,9 @@ class STAMutiIndividual(STAIndividual):
 		self.imgs_list = []
 		for i in range(len(self.img_list)):
 			if self.img_list[i].endswith(".npy"):
-				fmri_masked = np.load(self.img_path)
+				fmri_masked = np.load(self.img_list[i])
 			else:
-				fmri_masked = self.masker.transform(self.img_path)
+				fmri_masked = self.masker.transform(self.img_list[i])
 			imgs = self.inverse_transform2tensor(fmri_masked).unsqueeze(0)
 			imgs = imgs.to(device=self.device)
 			self.imgs_list.append(imgs)
