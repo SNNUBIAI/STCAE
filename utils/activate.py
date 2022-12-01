@@ -116,7 +116,7 @@ class STAIndividual(Masker):
 		self.imgs = self.inverse_transform2tensor(fmri_masked).unsqueeze(0)
 		self.imgs = self.imgs.to(device=self.device)
 
-	def fit(self, epochs=2):
+	def fit(self, epochs=1):
 		self.stcae.train()
 		for epoch in trange(epochs):
 			total_loss = 0
@@ -163,23 +163,90 @@ class STAIndividual(Masker):
 		self.stca.eval()
 		self.stcae.eval()
 
-	def plot_net(self, img2d,
+	def plot_net(self,
+				 img2d,
 				 cut_coords=(5, 10, 15, 20, 25, 30, 35, 40),
 				 colorbar=True,
 				 display_mode="z",
 				 threshold=False,
-				 annotate=True, draw_cross=False):
+				 annotate=True,
+				 draw_cross=False):
 		if threshold:
 			img2d[img2d < threshold] = 0
 		components_img = self.img2NiftImage(img2d)
 		if annotate:
 			for i, cur_img in enumerate(iter_img(components_img)):
 				plot_stat_map(cur_img, display_mode=display_mode, title="index={}".format(i),
-							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate, draw_cross=False)
+							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate, draw_cross=draw_cross)
 				show()
 		else:
 			for i, cur_img in enumerate(iter_img(components_img)):
 				print(i+1)
 				plot_stat_map(cur_img, display_mode=display_mode,
-							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate, draw_cross=False)
+							  cut_coords=cut_coords, colorbar=colorbar, annotate=annotate, draw_cross=draw_cross)
 				show()
+
+class STAMutiIndividual(STAIndividual):
+	def __init__(self,
+				 img_list=None,
+				 mask_path="/home/public/ExperimentData/HCP900/HCP_data/mask_152_4mm.nii.gz",
+				 device="cuda",
+				 model_path=None,
+				 time_step=40,
+				 out_map=64,
+				 lr=0.0001
+				 ):
+		super(STAMutiIndividual, self).__init__(mask_path=mask_path,
+												img_path=img_list,
+												device=device,
+												model_path=model_path,
+												time_step=time_step,
+												out_map=out_map,
+												lr=lr)
+		self.img_list = img_list
+
+	def load_data(self):
+		self.imgs_list = []
+		for i in range(len(self.img_list)):
+			if self.img_list[i].endswith(".npy"):
+				fmri_masked = np.load(self.img_path)
+			else:
+				fmri_masked = self.masker.transform(self.img_path)
+			imgs = self.inverse_transform2tensor(fmri_masked).unsqueeze(0)
+			imgs = imgs.to(device=self.device)
+			self.imgs_list.append(imgs)
+
+	def fit(self, epochs=1):
+		self.stcae.train()
+		for epoch in trange(epochs):
+			total_loss = 0
+			learning_times = 0
+			for index in range(len(self.imgs_list)):
+				imgs = self.imgs_list[index]
+				for i in range(imgs.shape[1] - self.time_step):
+					x = imgs[:, i:i + 40, ...]
+					y_signals = self.stcae(x)
+
+					loss = self.mse_loss(x, y_signals)
+
+					self.optimizer.zero_grad()
+					loss.backward()
+					self.optimizer.step()
+					learning_times += 1
+
+					total_loss += loss.item()
+			print("\nloss :{}".format(total_loss / learning_times))
+		self.stca.load_state_dict(self.stcae.stca.state_dict())
+
+	def load_img(self, img_path):
+		if isinstance(img_path, int):
+			self.imgs = self.imgs_list[img_path]
+		elif isinstance(img_path, str):
+			if img_path.endswith(".npy"):
+				fmri_masked = np.load(img_path)
+			else:
+				fmri_masked = self.masker.transform(img_path)
+			self.imgs = self.inverse_transform2tensor(fmri_masked).unsqueeze(0)
+			self.imgs = self.imgs.to(device=self.device)
+		else:
+			raise ValueError("img_path must be the index of the imgs list or the img path.")
