@@ -121,7 +121,7 @@ class STAIndividual(Masker):
 		for epoch in trange(epochs):
 			total_loss = 0
 			for i in range(self.imgs.shape[1] - self.time_step):
-				x = self.imgs[:, i:i + 40, ...]
+				x = self.imgs[:, i:i + self.time_step, ...]
 				y_signals = self.stcae(x)
 
 				loss = self.mse_loss(x, y_signals)
@@ -224,7 +224,7 @@ class STAMutiIndividual(STAIndividual):
 			for index in range(len(self.imgs_list)):
 				imgs = self.imgs_list[index]
 				for i in range(imgs.shape[1] - self.time_step):
-					x = imgs[:, i:i + 40, ...]
+					x = imgs[:, i:i + self.time_step, ...]
 					y_signals = self.stcae(x)
 
 					loss = self.mse_loss(x, y_signals)
