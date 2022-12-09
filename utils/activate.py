@@ -152,8 +152,8 @@ class STAIndividual(Masker):
 	def predict_encode(self):
 		self.eval()
 		encode_list = []
-		for i in range(self.imgs.shape[1] - self.time_step):
-			x = self.imgs[:, i:i + 40, ...]
+		for i in range(self.imgs.shape[1] - self.time_step + 1):
+			x = self.imgs[:, i:i + self.time_step, ...]
 			encode = self.stcae.encode(x)
 			encode_list.append(encode)
 		encode = torch.cat(encode_list, dim=0)
