@@ -1,5 +1,5 @@
 # STCAE
-Spatial-Temporal Convolutional Attention Encoder
+Spatial-Temporal Convolutional Attention for Mapping Functional Brain Networks [preprint_arxiv](https://arxiv.org/abs/2211.02315)
 
 ## Requirement
 - pytorch
@@ -42,3 +42,14 @@ sta.plot_net(img2d)
 - MutiHeadSTCAE with sampling (ADHD200)
 
 `nohup python train.py --load_dataset adhd --model mutiheadstcae --encoder adhd_rest_head16_sample176 --n_heads 16 --device cuda --img_path /home/public/ExperimentData/ADHD200/adhd/adhd40.npy --epochs 3 --time_step 176 --out_map 64 --sample_num 176 > out.log 2>&1 &`
+
+## Citing STCAE
+```
+@inproceedings{stcae,
+  title={Spatial-Temporal Convolutional Attention for Mapping Functional Brain Networks},
+  author={Liu, Yiheng and Ge, Enjie and Qiang, Ning and Liu, Tianming and Ge, Bao},
+  booktitle={2023 IEEE 20th International Symposium on Biomedical Imaging (ISBI 2023)},
+  year={2023},
+  organization={IEEE}
+}
+```
