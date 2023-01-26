@@ -16,9 +16,9 @@ from utils.activate import STAIndividual
 sta = STAIndividual(mask_path="/home/public/ExperimentData/HCP900/HCP_data/mask_152_4mm.nii.gz",
                     img_path="/home/public/ExperimentData/HCP900/HCP_RestingonMNI/100307/MNINonLinear/Results/rfMRI_REST1_LR/rfMRI_REST1_LR.nii.gz",
                     device="cuda",
-				    model_path=None,
-				    time_step=40,
-				    out_map=64,
+		    model_path=None,
+		    time_step=40,
+		    out_map=64,
                     lr=0.0001) 
 sta.load_img()
 sta.fit(epochs=1)
@@ -42,6 +42,10 @@ sta.plot_net(img2d)
 - MutiHeadSTCAE with sampling (ADHD200)
 
 `nohup python train.py --load_dataset adhd --model mutiheadstcae --encoder adhd_rest_head16_sample176 --n_heads 16 --device cuda --img_path /home/public/ExperimentData/ADHD200/adhd/adhd40.npy --epochs 3 --time_step 176 --out_map 64 --sample_num 176 > out.log 2>&1 &`
+
+
+## Result
+The results can be seen at [HCP-rest](./HCP_rest.ipynb) and [HCP-task (motor)](./hcp_motor_0-corr-window_size_40.ipynb)
 
 ## Citing STCAE
 ```
