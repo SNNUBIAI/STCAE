@@ -1,5 +1,5 @@
 # STCAE
-Spatial-Temporal Convolutional Attention for Mapping Functional Brain Networks [preprint_arxiv](https://arxiv.org/abs/2211.02315)
+- [Spatial-Temporal Convolutional Attention for Mapping Functional Brain Networks](https://ieeexplore.ieee.org/abstract/document/10230749)
 
 ## Requirement
 - pytorch
@@ -49,10 +49,11 @@ The results can be seen at [HCP-rest](./HCP_rest.ipynb) and [HCP-task (motor)](.
 
 ## Citing STCAE
 ```
-@inproceedings{stcae,
+@inproceedings{liu2023spatial,
   title={Spatial-Temporal Convolutional Attention for Mapping Functional Brain Networks},
   author={Liu, Yiheng and Ge, Enjie and Qiang, Ning and Liu, Tianming and Ge, Bao},
-  booktitle={2023 IEEE 20th International Symposium on Biomedical Imaging (ISBI 2023)},
+  booktitle={2023 IEEE 20th International Symposium on Biomedical Imaging (ISBI)},
+  pages={1--4},
   year={2023},
   organization={IEEE}
 }
