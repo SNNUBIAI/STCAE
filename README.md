@@ -1,5 +1,6 @@
 # STCAE
 - [Spatial-Temporal Convolutional Attention for Mapping Functional Brain Networks](https://ieeexplore.ieee.org/abstract/document/10230749)
+- [Spatial-temporal convolutional attention for discovering and characterizing functional brain networks in task fMRI](https://www.sciencedirect.com/science/article/pii/S1053811924000144)
 
 ## Requirement
 - pytorch
@@ -56,5 +57,25 @@ The results can be seen at [HCP-rest](./HCP_rest.ipynb) and [HCP-task (motor)](.
   pages={1--4},
   year={2023},
   organization={IEEE}
+}
+
+@article{liu2024spatial,
+  title={Spatial-temporal convolutional attention for discovering and characterizing functional brain networks in task fMRI},
+  author={Liu, Yiheng and Ge, Enjie and Kang, Zili and Qiang, Ning and Liu, Tianming and Ge, Bao},
+  journal={NeuroImage},
+  pages={120519},
+  year={2024},
+  publisher={Elsevier}
+}
+```
+
+## Related Work
+- [SCAAE](https://github.com/WhatAboutMyStar/SCAAE)
+```
+@article{liu2022discovering,
+  title={Discovering Dynamic Functional Brain Networks via Spatial and Channel-wise Attention},
+  author={Liu, Yiheng and Ge, Enjie and He, Mengshen and Liu, Zhengliang and Zhao, Shijie and Hu, Xintao and Zhu, Dajiang and Liu, Tianming and Ge, Bao},
+  journal={arXiv preprint arXiv:2205.09576},
+  year={2022}
 }
 ```
