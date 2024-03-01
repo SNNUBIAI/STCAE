@@ -78,4 +78,11 @@ The results can be seen at [HCP-rest](./HCP_rest.ipynb) and [HCP-task (motor)](.
   journal={arXiv preprint arXiv:2205.09576},
   year={2022}
 }
+
+@article{liu2024mapping,
+  title={Mapping dynamic spatial patterns of brain function with spatial-wise attention},
+  author={Liu, Yiheng and Ge, Enjie and He, Mengshen and Liu, Zhengliang and Zhao, Shijie and Hu, Xintao and Qiang, Ning and Zhu, Dajiang and Liu, Tianming and Ge, Bao},
+  journal={Journal of Neural Engineering},
+  year={2024}
+}
 ```
